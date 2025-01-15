@@ -1,5 +1,6 @@
 using System;
 using Unity.Netcode;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -18,7 +19,10 @@ public class TempUI : MonoBehaviour
     [SerializeField]
     Button m_StartClientButton;
     [SerializeField]
-    ExtendedNetworkManager extendedNetworkManager;
+    ServerManager serverManager;
+    [SerializeField]
+    GameObject serverManagerPrefab;
+    private GameObject serverManagerInstance;
 
     void Awake()
     {
@@ -36,24 +40,27 @@ public class TempUI : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        if (extendedNetworkManager != null)
-        {
-            m_StartHostButton.onClick.AddListener(StartHost);
-            m_StartClientButton.onClick.AddListener(StartClient);
-        }
-        else Debug.Log("extended was null");
-
+        m_StartHostButton.onClick.AddListener(StartHost);
+        m_StartClientButton.onClick.AddListener(StartClient);
     }
 
     void StartClient()
     {
-        extendedNetworkManager.StartClient();
+        //if (serverManager == null || serverManager.CallBacksSet == false) return; // Order matters, should be ok in C#
+        NetworkManager.Singleton.StartClient();
         DeactivateButtons();
     }
 
     void StartHost()
     {
-        extendedNetworkManager.StartHost();
+        // if (serverManager == null || serverManager.CallBacksSet == false) return; // Order matters, should be ok in C#
+
+        if (ServerManager.instance == null)
+        {
+            GameObject serverManagerInstance = Instantiate(serverManagerPrefab);
+            serverManager = GetComponent<ServerManager>();
+        }
+        NetworkManager.Singleton.StartHost();
         DeactivateButtons();
     }
 
@@ -61,5 +68,6 @@ public class TempUI : MonoBehaviour
     {
         m_StartHostButton.interactable = false;
         m_StartClientButton.interactable = false;
+        this.gameObject.SetActive(false);
     }
 }
