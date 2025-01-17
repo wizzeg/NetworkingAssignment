@@ -12,8 +12,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private ClientMovement clientMovement;
 
-    private const float shootCoolDown = 3f;
-    private float shootTimer = 3f;
+    private const float shootCoolDown = 0.25f;
+    private float shootTimer = 0f;
+    private Vector3 lastDirection = new Vector3(1, 0, 0);
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
 
@@ -35,16 +36,16 @@ public class PlayerController : MonoBehaviour
 
         if (input != Vector3.zero)
         {
+            lastDirection = input;
             clientMovement.MovePlayer(input);
         }
 
         bool shoot = playerControls.Playing.Shoot.IsPressed();
         if (shoot && shootTimer < 0f)
         {
-            Debug.Log("I am client and I want to shoot");
             if (clientPacketSender)
             {
-                clientPacketSender.ShootServerRpc();
+                clientPacketSender.ShootServerRpc(transform.position, lastDirection);
                 shootTimer = shootCoolDown;
             }
             
@@ -66,6 +67,4 @@ public class PlayerController : MonoBehaviour
             }
         }
     }
-
-
 }

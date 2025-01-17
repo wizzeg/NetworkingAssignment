@@ -4,8 +4,15 @@ using UnityEngine;
 public class ClientPacketSender : NetworkBehaviour
 {
     [ServerRpc]
-    public void ShootServerRpc()
+    public void ShootServerRpc(Vector3 origin, Vector3 direction)
     {
-        ServerManager.instance.PlayerShoot(OwnerClientId);
+        if (ServerManager.instance != null)
+        {
+            ServerManager.instance.PlayerShoot(OwnerClientId, origin, direction);
+        }
+    }
+    public ulong GetClientID()
+    {
+        return OwnerClientId;
     }
 }

@@ -8,9 +8,14 @@ public class ServerManager : MonoBehaviour
 {
     [SerializeField]
     GameObject playerPrefab;
+    [SerializeField]
+    GameObject bulletPrefab;
+    [SerializeField]
+    GameObject explosionPrefab;
 
     private List<GameObject> players = new List<GameObject>();
     private List<ulong> playerIds = new List<ulong>();
+    private List<GameObject> explosions = new List<GameObject>();
     public bool CallBacksSet { protected set; get;}
 
     public static ServerManager instance;
@@ -32,7 +37,6 @@ public class ServerManager : MonoBehaviour
 
     private void ServerManager_OnClientConnected(ulong playerId)
     {
-        Debug.Log("I'm told to spawn players through CallBack");
         if (NetworkManager.Singleton.IsServer)
         {
             playerIds.Add(playerId);
@@ -85,12 +89,6 @@ public class ServerManager : MonoBehaviour
         }
     }
 
-    public bool SpawnClient()
-    {
-        Debug.Log("Should spawn player now");
-        return true;
-    }
-
     private IEnumerator SetCallBacks()
     {
         int attempts = 0;
@@ -115,8 +113,40 @@ public class ServerManager : MonoBehaviour
         }
     }
 
-    public void PlayerShoot(ulong clientID)
+    public void PlayerShoot(ulong clientID, Vector3 origin, Vector3 direction)
     {
-        Debug.Log("Client Shot from " + clientID);
+        GameObject bullet = Instantiate(bulletPrefab);
+        bullet.transform.position = origin;
+        bullet.transform.rotation = Quaternion.LookRotation(direction);
+        bullet.GetComponent<BulletMove>().direction = direction;
+        bullet.GetComponent<BulletMove>().HitPlayer += HitPlayer;
+        bullet.GetComponent<BulletMove>().ownerID = clientID;
+        bullet.GetComponent<BulletMove>().DespawnBullet += DespawnNetworkObject;
+        //bullets.Add(bullet);
+        bullet.GetComponent<NetworkObject>().Spawn(true);
+        Debug.Log("Client " + clientID + " Shot");
+    }
+
+    public void HitPlayer(ulong clientID, NetworkObject bullet, Vector3 position, Vector3 direction)
+    {
+        position -= 0.25f * direction;
+        Debug.Log("Client " + clientID + " was hit.");
+        GameObject explosion = Instantiate(explosionPrefab);
+        explosion.transform.position = position;
+        explosion.transform.rotation = Quaternion.LookRotation(direction);
+        explosion.GetComponent<NetworkObject>().Spawn();
+        explosion.GetComponent<BulletExplodeSync>().bulletExplodeSync += DespawnNetworkObject;
+        //explosion.GetComponent<BulletExplodeSync>().origin.Value = position;
+        //explosion.GetComponent<BulletExplodeSync>().direction.Value = direction;
+        explosion.GetComponent<BulletExplodeSync>().SetBulletData(position, direction);
+        DespawnNetworkObject(bullet);
+    }
+
+    public void DespawnNetworkObject(NetworkObject networkObject)
+    {
+        if (networkObject.IsSpawned)
+        {
+            networkObject.Despawn();
+        }
     }
 }
