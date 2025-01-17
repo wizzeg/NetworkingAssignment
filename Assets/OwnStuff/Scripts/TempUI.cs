@@ -18,8 +18,8 @@ public class TempUI : MonoBehaviour
     Button m_StartHostButton;
     [SerializeField]
     Button m_StartClientButton;
-    [SerializeField]
-    ServerManager serverManager;
+    //[SerializeField]
+    //ServerManager serverManager;
     [SerializeField]
     GameObject serverManagerPrefab;
     private GameObject serverManagerInstance;
@@ -58,16 +58,21 @@ public class TempUI : MonoBehaviour
         if (ServerManager.instance == null)
         {
             GameObject serverManagerInstance = Instantiate(serverManagerPrefab);
-            serverManager = GetComponent<ServerManager>();
+            //serverManager = GetComponent<ServerManager>();
         }
         NetworkManager.Singleton.StartHost();
         DeactivateButtons();
+    }
+
+    private void Disconnect()
+    {
+        NetworkManager.Singleton.DisconnectClient(NetworkManager.Singleton.LocalClientId);
     }
 
     void DeactivateButtons()
     {
         m_StartHostButton.interactable = false;
         m_StartClientButton.interactable = false;
-        this.gameObject.SetActive(false);
+        this.gameObject.SetActive(true);
     }
 }

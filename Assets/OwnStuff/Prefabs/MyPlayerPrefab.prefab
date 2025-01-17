@@ -101,6 +101,7 @@ GameObject:
   - component: {fileID: 2635954973251865374}
   - component: {fileID: 1064020936869753366}
   - component: {fileID: 7783054659774108249}
+  - component: {fileID: -5846840533715313758}
   - component: {fileID: 2230650708199493199}
   m_Layer: 6
   m_Name: MyPlayerPrefab
@@ -241,6 +242,20 @@ MonoBehaviour:
   SwitchTransformSpaceWhenParented: 0
   Interpolate: 1
   SlerpPosition: 0
+--- !u!114 &-5846840533715313758
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6462493533476069521}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a33de6252926194aa3d1f8d48d3b9f0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
+  renderer: {fileID: 5611296367479360134}
 --- !u!65 &2230650708199493199
 BoxCollider:
   m_ObjectHideFlags: 0
