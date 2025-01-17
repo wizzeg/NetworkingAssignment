@@ -6,6 +6,8 @@ using System.Collections;
 
 public class ServerManager : MonoBehaviour
 {
+    // This will only exist on the server
+
     [SerializeField]
     GameObject playerPrefab;
     [SerializeField]
@@ -24,6 +26,7 @@ public class ServerManager : MonoBehaviour
 
     public void OnEnable()
     {
+        // The network manager might not exist yet, so we just do a coroutine
         if (!CallBacksSet)
         {
             StartCoroutine(SetCallBacks());
@@ -33,6 +36,7 @@ public class ServerManager : MonoBehaviour
 
     private void ServerManager_OnClientConnected(ulong playerId)
     {
+        // Spawning player manually, because it was better leraning exerpience
         if (NetworkManager.Singleton.IsServer)
         {
             GameObject player = Instantiate(playerPrefab);
@@ -79,14 +83,16 @@ public class ServerManager : MonoBehaviour
 
     public void PlayerShoot(ulong clientID, Vector3 origin, Vector3 direction)
     {
+        // instantiate a bullet, and set the networkvariables, and spawn it.
         GameObject bullet = Instantiate(bulletPrefab);
         bullet.transform.position = origin;
         bullet.transform.rotation = Quaternion.LookRotation(direction);
 
+        // players won't get this data, but only the server needs it anyway
         BulletMove tempBulletMove = bullet.GetComponent<BulletMove>();
         tempBulletMove.direction = direction;
-        tempBulletMove.HitPlayer += HitPlayer;
         tempBulletMove.ownerID = clientID;
+        tempBulletMove.HitPlayer += HitPlayer;
         tempBulletMove.DespawnBullet += DespawnNetworkObject;
 
         bullet.GetComponent<NetworkObject>().Spawn(true);
@@ -94,22 +100,21 @@ public class ServerManager : MonoBehaviour
 
     public void HitPlayer(ulong clientID, NetworkObject bullet, Vector3 position, Vector3 direction)
     {
+        // playet was hit, so we must create an explosion with the data we were given.
         position -= 0.25f * direction;
-        Debug.Log("Client " + clientID + " was hit.");
         GameObject explosion = Instantiate(explosionPrefab);
-        explosion.transform.position = position;
-        explosion.transform.rotation = Quaternion.LookRotation(direction);
 
         explosion.GetComponent<NetworkObject>().Spawn();
-
+        // players won't get all this data, but the NetworkVariables data will still shared to the players
         BulletExplodeSync tempBulletExplodeSync = explosion.GetComponent<BulletExplodeSync>();
-        tempBulletExplodeSync.bulletExplodeSync += DespawnNetworkObject;
-        tempBulletExplodeSync.SetBulletData(position, direction);
+        tempBulletExplodeSync.bulletExplodeSync += DespawnNetworkObject; // new players won't get this data, but only server needs it anyways
+        tempBulletExplodeSync.SetBulletData(position, direction); // modifying NetworkVariables must apparently be done after it has spawned, makes sense I guess
         DespawnNetworkObject(bullet);
     }
 
     public void DespawnNetworkObject(NetworkObject networkObject)
     {
+        // simply despawn the object
         if (networkObject.IsSpawned)
         {
             networkObject.Despawn();

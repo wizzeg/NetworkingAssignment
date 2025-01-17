@@ -11,7 +11,7 @@ public class ClientOwner : NetworkBehaviour
     }
     public override void OnNetworkSpawn()
     {
-        // Decideds if the player should be moved by input or not
+        // Decideds if the player should be moved by input or not, could disable other player stuff too
         base.OnNetworkDespawn();
         enabled = IsClient;
         playerController.EnableController(IsOwner);

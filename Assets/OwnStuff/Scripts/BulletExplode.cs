@@ -7,8 +7,6 @@ public class BulletExplode : MonoBehaviour
 {
     [SerializeField]
     private BulletExplodeSync bulletNetworkSync;
-    //[SerializeField]
-    //private ParticleSystem particleSystem;
 
     private bool exploded = false;
     private float timer = 0;
@@ -16,7 +14,8 @@ public class BulletExplode : MonoBehaviour
 
     private void Update()
     {
-        if (!exploded && transform.forward != Vector3.zero)
+        // check if this bullet has exploded yet or not, if it hasn't, then explode
+        if (!exploded)
         {
             Explode();
             exploded = true;

@@ -18,8 +18,6 @@ public class TempUI : MonoBehaviour
     Button m_StartHostButton;
     [SerializeField]
     Button m_StartClientButton;
-    //[SerializeField]
-    //ServerManager serverManager;
     [SerializeField]
     GameObject serverManagerPrefab;
     private GameObject serverManagerInstance;
@@ -52,6 +50,7 @@ public class TempUI : MonoBehaviour
 
     void StartHost()
     {
+        // start the servermanager for the host, the client does not have this
         if (ServerManager.instance == null)
         {
             GameObject serverManagerInstance = Instantiate(serverManagerPrefab);
