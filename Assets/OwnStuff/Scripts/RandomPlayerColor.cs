@@ -10,6 +10,10 @@ public class RandomPlayerColor : NetworkBehaviour
         base.OnNetworkSpawn();
         Random.InitState(((int)OwnerClientId));
         if (renderer != null)
+        {
             renderer.material.color = Random.ColorHSV();
+        }
+            
+
     }
 }

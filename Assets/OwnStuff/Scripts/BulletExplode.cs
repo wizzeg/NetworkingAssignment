@@ -19,7 +19,6 @@ public class BulletExplode : MonoBehaviour
         if (!exploded && transform.forward != Vector3.zero)
         {
             Explode();
-            //Explode(bulletNetworkSync.GetOrigin(), bulletNetworkSync.GetDirection());
             exploded = true;
         }
 
@@ -33,14 +32,6 @@ public class BulletExplode : MonoBehaviour
     private void Explode()
     {
         ParticleSystem particleSystem = GetComponent<ParticleSystem>();
-        particleSystem.Play();
-    }
-
-    private void Explode(Vector3 origin, Vector3 direction)
-    {
-        ParticleSystem particleSystem = GetComponent<ParticleSystem>();
-        particleSystem.transform.position = origin;
-        particleSystem.transform.rotation = Quaternion.LookRotation(direction);
         particleSystem.Play();
     }
 }

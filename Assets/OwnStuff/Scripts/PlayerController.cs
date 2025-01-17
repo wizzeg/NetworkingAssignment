@@ -15,19 +15,12 @@ public class PlayerController : MonoBehaviour
     private const float shootCoolDown = 0.25f;
     private float shootTimer = 0f;
     private Vector3 lastDirection = new Vector3(1, 0, 0);
-    
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
 
     private void Awake()
     {
         playerControls = new PlayerControls();
     }
-    void Start()
-    {
 
-    }
-
-    // Update is called once per frame
     void Update()
     {
         shootTimer -= Time.deltaTime;

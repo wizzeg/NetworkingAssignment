@@ -46,19 +46,15 @@ public class TempUI : MonoBehaviour
 
     void StartClient()
     {
-        //if (serverManager == null || serverManager.CallBacksSet == false) return; // Order matters, should be ok in C#
         NetworkManager.Singleton.StartClient();
         DeactivateButtons();
     }
 
     void StartHost()
     {
-        // if (serverManager == null || serverManager.CallBacksSet == false) return; // Order matters, should be ok in C#
-
         if (ServerManager.instance == null)
         {
             GameObject serverManagerInstance = Instantiate(serverManagerPrefab);
-            //serverManager = GetComponent<ServerManager>();
         }
         NetworkManager.Singleton.StartHost();
         DeactivateButtons();

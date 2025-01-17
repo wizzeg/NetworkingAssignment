@@ -11,14 +11,9 @@ public class ClientOwner : NetworkBehaviour
     }
     public override void OnNetworkSpawn()
     {
-        Debug.Log("Network spawned ClientOwner script");
+        // Decideds if the player should be moved by input or not
         base.OnNetworkDespawn();
         enabled = IsClient;
-
         playerController.EnableController(IsOwner);
-    }
-    public override void OnNetworkDespawn()
-    {
-        base.OnNetworkDespawn();
     }
 }

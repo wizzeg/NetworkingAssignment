@@ -13,11 +13,7 @@ public class ServerManager : MonoBehaviour
     [SerializeField]
     GameObject explosionPrefab;
 
-    private List<GameObject> players = new List<GameObject>();
-    private List<ulong> playerIds = new List<ulong>();
-    private List<GameObject> explosions = new List<GameObject>();
     public bool CallBacksSet { protected set; get;}
-
     public static ServerManager instance;
 
     public void Awake()
@@ -39,10 +35,7 @@ public class ServerManager : MonoBehaviour
     {
         if (NetworkManager.Singleton.IsServer)
         {
-            playerIds.Add(playerId);
-            Debug.Log("Spawning player on Server");
             GameObject player = Instantiate(playerPrefab);
-            players.Add(player);
             player.GetComponent<NetworkObject>().SpawnAsPlayerObject(playerId, true);
         }
     }
@@ -50,35 +43,7 @@ public class ServerManager : MonoBehaviour
 
     private void ServerManager_OnClientDisconnect(ulong playerId)
     {
-        if (NetworkManager.Singleton.IsServer)
-        {
-            for (int i = 0; i < playerIds.Count; i++)
-            {
-                if (playerId.Equals(playerIds[i]))
-                {
-                    // should do proper despawn here
-                    NetworkObject player = players[i].GetComponent<NetworkObject>();
-                    if (player.IsSpawned)
-                    {
-                        player.Despawn();
-                    }
-                    players.RemoveAt(i);
-                    playerIds.RemoveAt(i);
-                    break;
-                }
-            }
-        }
-
-    }
-
-    // Going to do this instead of Server Authoritative movement with prediction.
-    private void StartMovementChecksSystem()
-    {
-        if (NetworkManager.Singleton.IsServer)
-        {
-            Debug.Log("Starting System to check legal movement"); 
-        }
-        
+        // not needed
     }
 
     public void OnDisable()
@@ -101,9 +66,8 @@ public class ServerManager : MonoBehaviour
             else
             {
                 NetworkManager.Singleton.OnClientConnectedCallback += ServerManager_OnClientConnected;
-                NetworkManager.Singleton.OnClientDisconnectCallback += ServerManager_OnClientDisconnect;
+                // NetworkManager.Singleton.OnClientDisconnectCallback += ServerManager_OnClientDisconnect;
                 CallBacksSet = true;
-                Debug.Log("CallBacksSet");
             }
             attempts++;
         }
@@ -118,13 +82,14 @@ public class ServerManager : MonoBehaviour
         GameObject bullet = Instantiate(bulletPrefab);
         bullet.transform.position = origin;
         bullet.transform.rotation = Quaternion.LookRotation(direction);
-        bullet.GetComponent<BulletMove>().direction = direction;
-        bullet.GetComponent<BulletMove>().HitPlayer += HitPlayer;
-        bullet.GetComponent<BulletMove>().ownerID = clientID;
-        bullet.GetComponent<BulletMove>().DespawnBullet += DespawnNetworkObject;
-        //bullets.Add(bullet);
+
+        BulletMove tempBulletMove = bullet.GetComponent<BulletMove>();
+        tempBulletMove.direction = direction;
+        tempBulletMove.HitPlayer += HitPlayer;
+        tempBulletMove.ownerID = clientID;
+        tempBulletMove.DespawnBullet += DespawnNetworkObject;
+
         bullet.GetComponent<NetworkObject>().Spawn(true);
-        Debug.Log("Client " + clientID + " Shot");
     }
 
     public void HitPlayer(ulong clientID, NetworkObject bullet, Vector3 position, Vector3 direction)
@@ -134,11 +99,12 @@ public class ServerManager : MonoBehaviour
         GameObject explosion = Instantiate(explosionPrefab);
         explosion.transform.position = position;
         explosion.transform.rotation = Quaternion.LookRotation(direction);
+
         explosion.GetComponent<NetworkObject>().Spawn();
-        explosion.GetComponent<BulletExplodeSync>().bulletExplodeSync += DespawnNetworkObject;
-        //explosion.GetComponent<BulletExplodeSync>().origin.Value = position;
-        //explosion.GetComponent<BulletExplodeSync>().direction.Value = direction;
-        explosion.GetComponent<BulletExplodeSync>().SetBulletData(position, direction);
+
+        BulletExplodeSync tempBulletExplodeSync = explosion.GetComponent<BulletExplodeSync>();
+        tempBulletExplodeSync.bulletExplodeSync += DespawnNetworkObject;
+        tempBulletExplodeSync.SetBulletData(position, direction);
         DespawnNetworkObject(bullet);
     }
 
