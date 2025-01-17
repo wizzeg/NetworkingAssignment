@@ -867,14 +867,12 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Create Virtual Players with "Multiplayer Play Mode", then press "Play".
+  m_Text: 'Move with WASD, Shoot with Space.
 
-    You
-    may start a host or client via the buttons on the right, or via the inspector
-    of the NetworkManager, or via code.
+    By intercepting another players
+    bullet with your own cube,
 
-    When you see the cube, you can move
-    it with the keys W, A, S, D'
+    you can communicate your willingness of participation.'
 --- !u!224 &3858672266717044289
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1205,7 +1203,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_StartHostButton: {fileID: 2832197387182086741}
   m_StartClientButton: {fileID: 1273565605439472197}
-  serverManager: {fileID: 0}
   serverManagerPrefab: {fileID: 6740621230007690425, guid: 3c4b473ae756c0148be6e2230e5c1c54, type: 3}
 --- !u!224 &8891595828886201031
 RectTransform:
