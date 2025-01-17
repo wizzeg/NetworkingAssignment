@@ -111,7 +111,7 @@ MonoBehaviour:
   InLocalSpace: 0
   SwitchTransformSpaceWhenParented: 0
   Interpolate: 0
-  SlerpPosition: 0
+  SlerpPosition: 1
 --- !u!1 &7517756414908117764
 GameObject:
   m_ObjectHideFlags: 0
